@@ -1,0 +1,50 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecr:PutImage",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "eks:DescribeCluster",
+        "eks:ListClusters"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::codepipeline-ap-south-1-*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "*"
+    }
+  ]
+}
