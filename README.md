@@ -82,7 +82,7 @@ docker push 009075573616.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
 eksctl create cluster \
   --name brain-tasks-cluster \
   --region ap-south-1 \
-  --version 1.28 \
+  --version 1.31 \
   --nodegroup-name brain-tasks-nodes \
   --node-type t3.medium \
   --nodes 2 \
@@ -150,7 +150,7 @@ aws codebuild create-project \
   --region ap-south-1
 ```
 
-> **Note:** Replace `YOUR_USERNAME` with your GitHub username. `privilegedMode=true` is required for Docker builds.
+> **Note:** `privilegedMode=true` is required for Docker builds inside CodeBuild.
 
 ### Step 8: Create CodePipeline (AWS Console)
 
@@ -243,6 +243,116 @@ aws elbv2 describe-load-balancers --region ap-south-1 \
   --output text
 ```
 
+## Deployment Evidence
+
+### 1. App Running Locally (Docker — port 3000)
+
+![App on localhost](screenshots/01-app-running-localhost-3000.jpg)
+
+### 2. App Running on EKS LoadBalancer
+
+![App on EKS](screenshots/02-app-running-on-eks-loadbalancer.jpg)
+
+**LoadBalancer URL:** `http://a684c2667e77c41c1839e0b0ec6ff4fa-1305895818.ap-south-1.elb.amazonaws.com`
+
+### 3. ECR Repository
+
+```
+Repository URI : 009075573616.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app
+Image Tag      : latest
+Image Size     : ~20 MB
+Pushed At      : 2026-11-12T10:09:30 IST
+```
+
+![ECR Repository](screenshots/03-ecr-repository.png)
+
+### 4. EKS Cluster
+
+```
+Cluster Name : brain-tasks-cluster
+Status       : ACTIVE
+Version      : 1.31
+Endpoint     : https://3955590AAE7A87C4C721AE49678186ED.gr7.ap-south-1.eks.amazonaws.com
+Nodes        : 2 (t3.medium, Amazon Linux 2023)
+  - ip-192-168-32-149.ap-south-1.compute.internal  (Ready)
+  - ip-192-168-67-110.ap-south-1.compute.internal  (Ready)
+```
+
+![EKS Cluster](screenshots/04-eks-cluster.png)
+
+### 5. Kubernetes Pods & Service
+
+```
+PODS:
+NAME                               READY   STATUS    NODE
+brain-tasks-app-5dd4c6854c-lnggq   1/1     Running   ip-192-168-32-149
+brain-tasks-app-5dd4c6854c-tm9gr   1/1     Running   ip-192-168-67-110
+
+SERVICE:
+NAME                      TYPE           EXTERNAL-IP
+brain-tasks-app-service   LoadBalancer   a684c2667e77c41c1839e0b0ec6ff4fa-1305895818.ap-south-1.elb.amazonaws.com
+```
+
+![kubectl get pods](screenshots/05-kubectl-pods-service.png)
+
+### 6. CodeBuild Project — Build Succeeded
+
+```
+Project   : brain-tasks-app-build
+Source    : https://github.com/Lakshmiparamesh/Brain-Tasks-App.git
+Status    : SUCCEEDED
+Start     : 2026-11-12T10:09:05 IST
+End       : 2026-11-12T10:09:35 IST
+```
+
+![CodeBuild](screenshots/06-codebuild-success.png)
+
+### 7. CodePipeline — All Stages Succeeded
+
+```
+Stage    Status
+------   ---------
+Source   Succeeded
+Build    Succeeded
+```
+
+![CodePipeline](screenshots/07-codepipeline-succeeded.png)
+
+### 8. CloudWatch Logs
+
+```
+Log Group: /aws/codebuild/brain-tasks-app-build
+```
+
+![CloudWatch](screenshots/08-cloudwatch-logs.png)
+
+### 9. GitHub Repository
+
+![GitHub Repo](screenshots/09-github-repo.png)
+
+## Screenshots Guide
+
+Take these screenshots from the **AWS Console** (ap-south-1 region) and save them in the `screenshots/` folder:
+
+| # | Screenshot | AWS Console URL |
+|---|-----------|-----------------|
+| 3 | ECR Repository | ECR → Repositories → brain-tasks-app → Images |
+| 4 | EKS Cluster | EKS → Clusters → brain-tasks-cluster |
+| 5 | kubectl pods & service | Terminal: `kubectl get pods` and `kubectl get svc` |
+| 6 | CodeBuild success | CodeBuild → brain-tasks-app-build → Build history |
+| 7 | CodePipeline | CodePipeline → brain-tasks-app-pipeline |
+| 8 | CloudWatch logs | CloudWatch → Log groups → /aws/codebuild/brain-tasks-app-build |
+| 9 | GitHub repo | https://github.com/Lakshmiparamesh/Brain-Tasks-App |
+
+## LoadBalancer Details
+
+```
+DNS Name : a684c2667e77c41c1839e0b0ec6ff4fa-1305895818.ap-south-1.elb.amazonaws.com
+LB Name  : a684c2667e77c41c1839e0b0ec6ff4fa
+VPC      : vpc-00a45850233f41ae0
+AZs      : ap-south-1a, ap-south-1b, ap-south-1c
+```
+
 ## Key Details
 
 | Item                | Value                                                                 |
@@ -250,7 +360,12 @@ aws elbv2 describe-load-balancers --region ap-south-1 \
 | AWS Account ID      | 009075573616                                                          |
 | Region              | ap-south-1 (Mumbai)                                                   |
 | ECR Repository      | 009075573616.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app        |
-| EKS Cluster         | brain-tasks-cluster                                                   |
+| EKS Cluster         | brain-tasks-cluster (v1.31)                                           |
+| EKS Endpoint        | https://3955590AAE7A87C4C721AE49678186ED.gr7.ap-south-1.eks.amazonaws.com |
 | App Port            | 3000 (container) → 80 (LoadBalancer)                                  |
+| LoadBalancer URL    | a684c2667e77c41c1839e0b0ec6ff4fa-1305895818.ap-south-1.elb.amazonaws.com |
 | Replicas            | 2                                                                     |
 | Node Type           | t3.medium                                                             |
+| CodeBuild Project   | brain-tasks-app-build                                                 |
+| CodePipeline        | brain-tasks-app-pipeline                                              |
+| CloudWatch Logs     | /aws/codebuild/brain-tasks-app-build                                  |
