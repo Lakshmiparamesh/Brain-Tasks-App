@@ -264,8 +264,6 @@ Image Size     : ~20 MB
 Pushed At      : 2026-11-12T10:09:30 IST
 ```
 
-![ECR Repository](screenshots/03-ecr-repository.png)
-
 ### 4. EKS Cluster
 
 ```
@@ -277,8 +275,6 @@ Nodes        : 2 (t3.medium, Amazon Linux 2023)
   - ip-192-168-32-149.ap-south-1.compute.internal  (Ready)
   - ip-192-168-67-110.ap-south-1.compute.internal  (Ready)
 ```
-
-![EKS Cluster](screenshots/04-eks-cluster.png)
 
 ### 5. Kubernetes Pods & Service
 
@@ -293,8 +289,6 @@ NAME                      TYPE           EXTERNAL-IP
 brain-tasks-app-service   LoadBalancer   a684c2667e77c41c1839e0b0ec6ff4fa-1305895818.ap-south-1.elb.amazonaws.com
 ```
 
-![kubectl get pods](screenshots/05-kubectl-pods-service.png)
-
 ### 6. CodeBuild Project — Build Succeeded
 
 ```
@@ -305,8 +299,6 @@ Start     : 2026-11-12T10:09:05 IST
 End       : 2026-11-12T10:09:35 IST
 ```
 
-![CodeBuild](screenshots/06-codebuild-success.png)
-
 ### 7. CodePipeline — All Stages Succeeded
 
 ```
@@ -316,33 +308,11 @@ Source   Succeeded
 Build    Succeeded
 ```
 
-![CodePipeline](screenshots/07-codepipeline-succeeded.png)
-
 ### 8. CloudWatch Logs
 
 ```
 Log Group: /aws/codebuild/brain-tasks-app-build
 ```
-
-![CloudWatch](screenshots/08-cloudwatch-logs.png)
-
-### 9. GitHub Repository
-
-![GitHub Repo](screenshots/09-github-repo.png)
-
-## Screenshots Guide
-
-Take these screenshots from the **AWS Console** (ap-south-1 region) and save them in the `screenshots/` folder:
-
-| # | Screenshot | AWS Console URL |
-|---|-----------|-----------------|
-| 3 | ECR Repository | ECR → Repositories → brain-tasks-app → Images |
-| 4 | EKS Cluster | EKS → Clusters → brain-tasks-cluster |
-| 5 | kubectl pods & service | Terminal: `kubectl get pods` and `kubectl get svc` |
-| 6 | CodeBuild success | CodeBuild → brain-tasks-app-build → Build history |
-| 7 | CodePipeline | CodePipeline → brain-tasks-app-pipeline |
-| 8 | CloudWatch logs | CloudWatch → Log groups → /aws/codebuild/brain-tasks-app-build |
-| 9 | GitHub repo | https://github.com/Lakshmiparamesh/Brain-Tasks-App |
 
 ## LoadBalancer Details
 
